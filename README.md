@@ -25,6 +25,20 @@ Incluye:
 
 Este notebook **no forma parte de la aplicación en producción**, sino que documenta el razonamiento y las decisiones técnicas que justifican la arquitectura del sistema.
 
-📁 Ubicación:
 
-    notebooks/
+## 📂 Estructura del Proyecto
+
+cybersec-mlops-pipeline/
+├── data/               # Datos de entrada y salida del sistema
+│   └── normalized/     # Dataset de eventos procesado (formato Parquet)
+│   └── alerts_ml.csv   # Alertas generadas por el modelo ML
+├── docs/               # Documentación técnica y de arquitectura
+├── frontend/           # Aplicación de visualización con Streamlit
+├── ml/                 # Lógica de entrenamiento y scoring del modelo ML
+├── models/             # Modelo entrenado (Isolation Forest .joblib)
+├── notebooks/          # Notebook explicativo del sistema
+├── scripts/            # Scripts de ejecución y automatización
+├── Dockerfile          # Definición de imagen Docker
+├── requirements.txt    # Dependencias del proyecto
+└── README.md           # Documentación principal del repositorio
+
