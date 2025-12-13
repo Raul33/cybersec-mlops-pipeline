@@ -62,3 +62,14 @@ cybersec-mlops-pipeline/
 ├── requirements.txt       # Dependencias del proyecto
 └── README.md              # Documentación principal del repositorio
 
+
+## 🧠 Scripts principales
+
+| Script                             | Descripción                                                  |
+|------------------------------------|--------------------------------------------------------------|
+| `scripts/train_iforest.py`         | Entrena y guarda modelo Isolation Forest                    |
+| `scripts/score_events.py`          | Puntúa eventos usando el modelo entrenado                   |
+| `scripts/run_iforest.py`           | Filtra eventos anómalos y genera alertas ML                |
+| `scripts/run_pipeline.py`          | Automatiza el flujo de entrenamiento, scoring y alertas     |
+| `rules/sigma_emulator.py`          | Simula reglas Sigma sobre eventos para detección basada en reglas |
+
