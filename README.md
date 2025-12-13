@@ -26,19 +26,39 @@ Incluye:
 Este notebook **no forma parte de la aplicación en producción**, sino que documenta el razonamiento y las decisiones técnicas que justifican la arquitectura del sistema.
 
 
-## 📂 Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
+```bash
 cybersec-mlops-pipeline/
-├── data/               # Datos de entrada y salida del sistema
-│   └── normalized/     # Dataset de eventos procesado (formato Parquet)
-│   └── alerts_ml.csv   # Alertas generadas por el modelo ML
-├── docs/               # Documentación técnica y de arquitectura
-├── frontend/           # Aplicación de visualización con Streamlit
-├── ml/                 # Lógica de entrenamiento y scoring del modelo ML
-├── models/             # Modelo entrenado (Isolation Forest .joblib)
-├── notebooks/          # Notebook explicativo del sistema
-├── scripts/            # Scripts de ejecución y automatización
-├── Dockerfile          # Definición de imagen Docker
-├── requirements.txt    # Dependencias del proyecto
-└── README.md           # Documentación principal del repositorio
+├── data/                  # Datos de entrada y salida del sistema
+│   ├── normalized/        # Dataset de eventos procesado (formato Parquet)
+│   └── alerts_ml.csv      # Alertas generadas por el modelo ML
+│
+├── docs/                  # Documentación técnica y de arquitectura
+│   ├── 01_objetivos.md
+│   ├── 02_metricas.md
+│   └── 03_estructura.md
+│
+├── frontend/              # Aplicación de visualización con Streamlit
+│   └── streamlit_app.py
+│
+├── ml/                    # Lógica de entrenamiento y scoring del modelo ML
+│   ├── anomaly_detector.py
+│   └── features.py
+│
+├── models/                # Modelo entrenado (Isolation Forest .joblib)
+│   └── iforest.joblib
+│
+├── notebooks/             # Notebook explicativo del sistema
+│   └── deteccion_anomalias_explicado.ipynb
+│
+├── scripts/               # Scripts de ejecución y automatización
+│   ├── generate_test_parquet.py
+│   ├── run_iforest.py
+│   ├── score_events.py
+│   └── train_iforest.py
+│
+├── Dockerfile             # Definición de imagen Docker
+├── requirements.txt       # Dependencias del proyecto
+└── README.md              # Documentación principal del repositorio
 
