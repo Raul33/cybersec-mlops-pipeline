@@ -45,7 +45,7 @@ Este bucket lo usaremos para MLflow y otros servicios que requieran almacenamien
 Si deseas usar el CLI oficial de MinIO para cargar archivos, listar buckets, etc.:
 
 1. Instala mc:
-[anchor](https://min.io/docs/minio/linux/reference/minio-mc.html)
+[MinIO client](https://min.io/docs/minio/linux/reference/minio-mc.html)
 
 2. Exporta la conexión local:
 
