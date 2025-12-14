@@ -1,0 +1,21 @@
+replicas: 1
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+persistence:
+  enabled: true
+  size: 2Gi
+  storageClass: "local-path"
+
+mode: standalone
+
+console:
+  enabled: true
+  service:
+    type: ClusterIP
