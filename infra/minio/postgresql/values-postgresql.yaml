@@ -1,0 +1,11 @@
+auth:
+  postgresPassword: mlops_pass
+  database: mlops_db
+primary:
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"
