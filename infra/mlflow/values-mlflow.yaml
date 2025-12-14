@@ -1,0 +1,55 @@
+replicaCount: 1
+
+image:
+  repository: burakince/mlflow
+  pullPolicy: IfNotPresent
+  tag: "3.7.0"
+
+backendStore:
+  databaseMigration: true
+  postgres:
+    enabled: true
+    host: mlops-postgresql.mlops.svc.cluster.local
+    port: 5432
+    database: mlflow
+    user: postgres
+    password: mlops_pass
+    driver: psycopg2
+
+artifactRoot:
+  s3:
+    enabled: true
+    bucket: mlflow-artifacts
+    awsAccessKeyId: your_user
+    awsSecretAccessKey: your_password
+
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: http://mlops-minio.mlops.svc.cluster.local:9001
+
+service:
+  type: ClusterIP
+  port: 5000
+  containerPort: 5000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 300m
+    memory: 512Mi
+
+livenessProbe:
+  initialDelaySeconds: 60
+  timeoutSeconds: 5
+  periodSeconds: 30
+  failureThreshold: 6
+
+readinessProbe:
+  initialDelaySeconds: 60
+  timeoutSeconds: 5
+  periodSeconds: 30
+  failureThreshold: 6
+
+auth:
+  enabled: false

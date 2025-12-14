@@ -12,7 +12,7 @@ Este despliegue se realiza con recursos mínimos para laboratorios con recursos 
 
 Ruta: `infra/minio/values-minio.yaml`
 
-### ⚙️ Comando de instalación
+### 💻 Comando de instalación
 
 ```yaml
 helm install mlops-minio minio/minio \
