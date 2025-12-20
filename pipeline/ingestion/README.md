@@ -97,3 +97,20 @@ Las decisiones técnicas tomadas en esta fase podrán incluirse en el TFM como e
 * decisiones de ingeniería fundamentadas
 * trazabilidad del ciclo de vida del pipeline
 * gestión de compatibilidad entre paquetes
+
+## 📌 Evolución del módulo: generación sintética
+
+Se añadió el task `generate_synthetic_events` para producir un DataFrame sintético con 10 eventos de red. Este paso valida la capacidad del pipeline para:
+
+- procesar datos estructurados en forma tabular
+- generar contenido reproducible
+- orquestar ejecución mediante Prefect
+- devolver estructuras complejas entre tasks
+
+Este es el primer bloque funcional real del pipeline y servirá como base para:
+
+- validación de datos
+- serialización parquet
+- almacenamiento en MinIO
+- registro de metadatos
+
