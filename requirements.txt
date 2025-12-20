@@ -8,4 +8,6 @@ pyarrow==14.0.1
 prefect==2.14.10
 griffe==0.36.5
 minio==7.1.16
+psycopg2-binary==2.9.9
+
 

@@ -2,6 +2,7 @@ from prefect import flow, task
 import pandas as pd
 from datetime import datetime
 import numpy as np
+import os
 
 @task
 def generate_synthetic_events():
@@ -87,6 +88,54 @@ def upload_to_minio(filepath: str):
     print(f"Archivo subido a MinIO: s3://{bucket_name}/{filename}")
     return f"s3://{bucket_name}/{filename}"
 
+@task
+def register_ingestion_event(timestamp_ingesta: str, nombre_archivo: str, ruta_minio: str, num_registros: int, estado: str):
+    import os
+    import psycopg2
+    from psycopg2.extras import execute_values
+
+    # credenciales desde variables de entorno
+    db_host = os.getenv("PG_HOST", "localhost")
+    db_port = os.getenv("PG_PORT", "5555")
+    db_user = os.getenv("PG_USER", "postgres")
+    db_pass = os.getenv("PG_PASSWORD")
+    db_name = os.getenv("PG_DATABASE", "mlops_db")
+
+    if not db_pass:
+        raise ValueError("PG_PASSWORD no está definida en variables de entorno.")
+
+    conn = psycopg2.connect(
+        host=db_host,
+        port=db_port,
+        user=db_user,
+        password=db_pass,
+        dbname=db_name
+    )
+
+    cur = conn.cursor()
+
+    insert_query = """
+        INSERT INTO ingestion_events (
+            timestamp_ingesta,
+            nombre_archivo,
+            ruta_minio,
+            num_registros,
+            estado
+        ) VALUES %s
+    """
+
+    values = [
+        (timestamp_ingesta, nombre_archivo, ruta_minio, num_registros, estado)
+    ]
+
+    execute_values(cur, insert_query, values)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    print("Evento de ingesta registrado en PostgreSQL.")
+
+
 
 
 
@@ -101,8 +150,18 @@ def data_ingestion_flow():
     validate_data(df)
     filepath = save_parquet(df)
     minio_uri = upload_to_minio(filepath)
+
+    register_ingestion_event(
+        timestamp_ingesta=str(df["timestamp"].min()),
+        nombre_archivo=os.path.basename(filepath),
+        ruta_minio=minio_uri,
+        num_registros=len(df),
+        estado="SUCCESS"
+    )
+
     print_dataframe(df)
     return filepath, minio_uri
+
 
 
 
