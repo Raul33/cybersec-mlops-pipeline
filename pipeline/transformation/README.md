@@ -1,4 +1,4 @@
-07 — Transformación de datos RAW → SILVER + auditoría PostgreSQL
+# 07 — Transformación de datos RAW → SILVER + auditoría PostgreSQL
 
 ## 📌 Objetivo
 En esta fase del pipeline MLOps convertimos los datos RAW almacenados en MinIO en una versión SILVER más limpia, enriquecida y lista para análisis o entrenamiento ML.
