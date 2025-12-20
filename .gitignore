@@ -205,3 +205,29 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Entornos virtuales
+.venv*
+venv/
+env/
+
+# Archivos generados por Python
+*.pyc
+__pycache__/
+
+# Jupyter artefacts
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Parquet / datasets / resultados
+*.parquet
+
+# Streamlit cache
+.streamlit/
+
+# Modelos
+*.joblib
+*.pkl
+
