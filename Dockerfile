@@ -14,8 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el resto del proyecto
 COPY . .
 
+# Crear carpeta para guardar modelos descargados
+RUN mkdir -p /app/models
+
 # Exponer puerto para Streamlit
 EXPOSE 8501
+
 
 # Comando de inicio
 CMD ["streamlit", "run", "frontend/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]

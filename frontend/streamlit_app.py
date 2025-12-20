@@ -25,14 +25,12 @@ st.metric("Total alertas", len(df))
 st.dataframe(df[df["ml_score"] >= threshold], use_container_width=True, height=400)
 
 # Histograma
-st.subheader("📊 Distribución de scores ML")
-scores = df["ml_score"].to_numpy()
-bins = np.linspace(0, 1, 21)
-counts, bins_edges = np.histogram(scores, bins=bins)
-fig = plt.figure(figsize=(4.5, 2))
-st.markdown("---")
-plt.bar(bins_edges[:-1], counts, width=(bins_edges[1] - bins_edges[0]), align="edge")
-plt.xlabel("ml_score")
-plt.ylabel("Frecuencia")
-plt.title("Distribución de scores")
-st.pyplot(fig)
+st.markdown("## 📊 Distribución de scores ML")
+
+col1, col2, col3 = st.columns([1,3,1])
+
+with col2:
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.hist(df["ml_score"], bins=20)
+    ax.set_title("Distribución de scores ML")
+    st.pyplot(fig)
