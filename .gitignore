@@ -231,3 +231,12 @@ __pycache__/
 *.joblib
 *.pkl
 
+# --- Docker / imágenes locales ---
+*.tar
+*.img
+
+# --- Datos locales que no quiero versionar (ajusta si hace falta) ---
+data/
+*.log
+
+

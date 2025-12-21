@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soc-copilot
+  namespace: mlops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: soc-copilot
+  template:
+    metadata:
+      labels:
+        app: soc-copilot
+    spec:
+      containers:
+        - name: soc-copilot
+          image: soc-copilot-app:latest
+          imagePullPolicy: Never
+          env:
+            - name: MINIO_ENDPOINT
+              value: "mlops-minio.mlops.svc.cluster.local:9000"
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlops-minio
+                  key: rootUser
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlops-minio
+                  key: rootPassword
+          ports:
+            - containerPort: 8501
+          volumeMounts:
+            - name: data-volume
+              mountPath: /app/data
+      volumes:
+        - name: data-volume
+          emptyDir: {} # opcional, reemplazable por PVC si necesitas persistencia
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: soc-copilot-service
+  namespace: mlops
+spec:
+  type: NodePort
+  selector:
+    app: soc-copilot
+  ports:
+    - name: http
+      port: 8501
+      targetPort: 8501
+      nodePort: 30010
+
