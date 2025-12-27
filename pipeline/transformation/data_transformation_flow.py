@@ -88,7 +88,7 @@ def upload_to_minio(path):
 @task
 def register_transformation_event(filename, silver_uri, num_rows):
     conn = psycopg2.connect(
-        host=os.getenv("PG_HOST", "localhost"),
+        host=os.getenv("PG_HOST", "mlops-postgresql.mlops.svc.cluster.local"),
         port=os.getenv("PG_PORT", "5555"),
         user=os.getenv("PG_USER", "postgres"),
         password=os.getenv("PG_PASSWORD"),

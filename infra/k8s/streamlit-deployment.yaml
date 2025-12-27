@@ -13,10 +13,12 @@ spec:
       labels:
         app: soc-copilot
     spec:
+      imagePullSecrets:
+        - name: harbor-cred
       containers:
         - name: soc-copilot
-          image: soc-copilot-app:latest
-          imagePullPolicy: Never
+          image: harbor.192.168.1.121.nip.io/mlops/soc-copilot:ui-light
+          imagePullPolicy: IfNotPresent
           env:
             - name: MINIO_ENDPOINT
               value: "mlops-minio.mlops.svc.cluster.local:9000"

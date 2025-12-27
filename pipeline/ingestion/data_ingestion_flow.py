@@ -95,7 +95,7 @@ def register_ingestion_event(timestamp_ingesta: str, nombre_archivo: str, ruta_m
     from psycopg2.extras import execute_values
 
     # credenciales desde variables de entorno
-    db_host = os.getenv("PG_HOST", "localhost")
+    db_host = os.getenv("PG_HOST", "mlops-postgresql.mlops.svc.cluster.local")
     db_port = os.getenv("PG_PORT", "5555")
     db_user = os.getenv("PG_USER", "postgres")
     db_pass = os.getenv("PG_PASSWORD")

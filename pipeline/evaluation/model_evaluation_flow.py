@@ -159,7 +159,7 @@ def upload_eval_to_minio(path):
 def register_eval_event(filename, model_name, dataset_name, metrics):
     """Inserta registro en PostgreSQL."""
     conn = psycopg2.connect(
-        host=os.getenv("PG_HOST", "localhost"),
+        host=os.getenv("PG_HOST", "mlops-postgresql.mlops.svc.cluster.local"),
         port=os.getenv("PG_PORT", "5555"),
         user=os.getenv("PG_USER", "postgres"),
         password=os.getenv("PG_PASSWORD"),

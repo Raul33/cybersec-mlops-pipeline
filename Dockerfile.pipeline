@@ -1,0 +1,38 @@
+# =========================
+# Stage 1: builder
+# =========================
+FROM python:3.11-slim AS builder
+
+RUN apt-get update && \
+    apt-get install -y gcc libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.pipeline.txt .
+
+RUN pip install --prefix=/install --no-cache-dir -r requirements.pipeline.txt
+
+
+# =========================
+# Stage 2: runtime
+# =========================
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Solo runtime deps (sin gcc)
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copiamos librerías ya compiladas
+COPY --from=builder /install /usr/local
+
+WORKDIR /app
+
+# Copiamos solo el código del pipeline
+COPY pipeline ./pipeline
+
+CMD ["python", "-m", "pipeline.full_mlops_flow"]

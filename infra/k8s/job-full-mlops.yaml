@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: full-mlops-pipeline
+  namespace: mlops
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: dockerhub-cred
+      containers:
+        - name: mlops-runner
+          image: rcabe005/cybersec-mlops-runner:latest
+          imagePullPolicy: Always
+          command: ["python", "pipeline/full_mlops_flow.py"]
+
+          env:
+            # ---------- MinIO ----------
+            - name: MINIO_ENDPOINT
+              value: "mlops-minio.mlops.svc.cluster.local:9000"
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlops-minio
+                  key: rootUser
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mlops-minio
+                  key: rootPassword
+
+            # ---------- PostgreSQL ----------
+            - name: PG_HOST
+              value: "mlops-postgresql.mlops.svc.cluster.local"
+            - name: PG_PORT
+              value: "5432"
+            - name: PG_USER
+              value: "postgres"
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mlops-postgresql
+                  key: postgres-password
+            - name: PG_DATABASE
+              value: "mlops_db"
+
+            # ---------- MLflow ----------
+            - name: MLFLOW_TRACKING_URI
+              value: "http://mlflow.mlops.svc.cluster.local:5000"

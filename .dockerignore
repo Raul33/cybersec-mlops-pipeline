@@ -1,0 +1,7 @@
+*
+!frontend/
+!pipeline/
+!requirements-streamlit.txt
+!requirements.ui.txt
+!requirements.pipeline.txt
+Dockerfile.streamlit
