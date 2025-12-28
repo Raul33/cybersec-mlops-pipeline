@@ -6,12 +6,19 @@ Esta fase incorpora un modelo de detección de anomalías basado en **Isolation 
 ---
 
 ## 📌 Flujo funcional
-1️⃣ Cargar datos desde MinIO (silver layer)  
+1️⃣ Cargar datos SILVER materializados en el workspace del Job de Kubernetes
 2️⃣ Entrenar Isolation Forest  
 3️⃣ Guardar el modelo como pickle  
 4️⃣ Subir el modelo a MinIO (gold/models)  
 5️⃣ Registrar el evento en PostgreSQL  
 
+---
+
+## 🧠 Nota sobre ejecución en Kubernetes
+
+Aunque el pipeline se ejecuta completamente en Kubernetes, cada Job dispone de un sistema de archivos efímero donde se materializan los resultados intermedios de cada subflow.
+
+El módulo de entrenamiento consume directamente los datos SILVER generados previamente dentro del mismo Job, evitando descargas redundantes desde MinIO y manteniendo el pipeline como una unidad atómica de ejecución.
 ---
 
 ## 📁 Estructura de archivos generados
@@ -91,7 +98,7 @@ Justificación:
 
 - contamination='auto' → robusto sin tunning
 
-## 🧠 Métricas básicas derivadas del score
+## 🧠 Posibles métricas derivables del score (trabajo futuro)
 
 Tras el entrenamiento, el modelo produce un score medio y desviación estándar:
 
@@ -100,6 +107,10 @@ Tras el entrenamiento, el modelo produce un score medio y desviación estándar:
 - score_std: = varianza(score_anomalía)
 
 Estas métricas permiten validar estabilidad sin complicar el diseño.
+
+> Actualmente estas métricas no se calculan ni se persisten en el pipeline.
+> Su inclusión se plantea como una extensión natural en futuras iteraciones, por ejemplo mediante integración con MLflow.
+
 
 ---
 
@@ -111,3 +122,13 @@ Estas métricas permiten validar estabilidad sin complicar el diseño.
   1 | 2025-12-20 18:35:01.403920   | s3://cybersec-ml-models/model_isoforest_2025… |           457 | {'n_estimators':100,'contamination':'auto'} | SUCCESS
 
 ```
+---
+
+## 📌 Gestión de features
+
+El entrenamiento utiliza exclusivamente las columnas definidas en:
+
+pipeline/config/features.py
+
+Esto garantiza coherencia total entre entrenamiento e inferencia, evita divergencias de esquema y facilita el mantenimiento del sistema.
+
