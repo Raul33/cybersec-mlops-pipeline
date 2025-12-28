@@ -1,72 +1,108 @@
-# 07 — Transformación de datos RAW → SILVER + auditoría PostgreSQL
+# Transformación de datos RAW → SILVER con auditoría
 
-## 📌 Objetivo
-En esta fase del pipeline MLOps convertimos los datos RAW almacenados en MinIO en una versión SILVER más limpia, enriquecida y lista para análisis o entrenamiento ML.
+## 📌 Objetivo del módulo
 
-Este paso añade trazabilidad total entre:
-- datos crudos (raw)
-- datos procesados (silver)
-- metadatos operacionales en PostgreSQL
+Este módulo implementa la fase de **transformación de datos** dentro del pipeline MLOps, convirtiendo eventos de red en formato RAW almacenados en MinIO en una versión **SILVER** enriquecida, estructurada y lista para análisis o entrenamiento de modelos de machine learning.
+
+La transformación garantiza:
+- calidad de datos
+- trazabilidad completa
+- separación clara de capas (RAW / SILVER)
+- auditoría por ejecución
 
 ---
 
-## 📌 Flujo funcional de transformación
+## 🔁 Flujo funcional de transformación
 
-1️⃣ **Carga desde MinIO (RAW)**
-- El flow detecta el archivo parquet más reciente del bucket `cybersec-ml-raw`.
+El flujo de transformación se implementa mediante **Prefect** y sigue los siguientes pasos:
 
-2️⃣ **Transformación del dataset**
-- Normalización de columnas  
-- Conversión de tipos  
-- Cálculo de métricas adicionales (`bytes_per_sec`)  
-- Clasificación de tráfico (`traffic_class`: HIGH | MEDIUM | LOW)
+1️⃣ **Selección del dataset RAW más reciente**  
+Se identifica automáticamente el archivo Parquet más reciente disponible en el bucket RAW de MinIO (`cybersec-ml-raw`).
 
-3️⃣ **Persistencia local SILVER**
-Los datos procesados se guardan automáticamente como:
+2️⃣ **Descarga local temporal**  
+El archivo seleccionado se descarga a una ubicación temporal (`data/tmp`) para su procesamiento.
 
+3️⃣ **Transformación del dataset**  
+Se aplican transformaciones deterministas para enriquecer los datos:
 
-```text
-data/transformed/network_events_silver_<timestamp>.parquet
-```
-ejemplo real:
+- Cálculo de `bytes_per_second`
+- Extracción de la hora del evento (`timestamp_hour`)
+- Clasificación del tamaño del flujo (`flow_size_category`)
 
-```text
-cybersec-ml-silver
-```
+Estas transformaciones generan nuevas features útiles para análisis y entrenamiento ML.
 
-
-4️⃣ **Subida a MinIO (SILVER)**
-El parquet transformado se envía al bucket:
+4️⃣ **Persistencia en formato SILVER**  
+El dataset transformado se guarda localmente en formato Parquet, versionado mediante timestamp:
 
 ```text
-cybersec-ml-silver
+data/silver/network_events_silver_<timestamp>.parquet
 ```
 
+5️⃣ **Subida a MinIO (SILVER layer)**
+El archivo generado se sube al bucket `cybersec-ml-silver`, desacoplando el almacenamiento del sistema de archivos local.
 
-5️⃣ **Registro de auditoría en PostgreSQL**
-Cada ejecución genera un evento estructurado:
+6️⃣ **Registro de auditoría en PostgreSQL**
+Cada ejecución del flow registra un evento en PostgreSQL con:
 
 - timestamp de transformación
-- archivo procesado
-- ubicación en MinIO
-- volumen de registros
-- estado final (SUCCESS | FAILED)
+
+- nombre del archivo generado
+
+- ruta del objeto en MinIO
+
+- número de registros procesados
+
+- estado final de la ejecución
 
 ---
 
-## 📂 Requisitos previos
+## 🧠 Implementación técnica
 
-📌 Buckets MinIO existentes:
+El flow completo está definido en:
+
+
+```text
+pipeline/transformation/data_transformation_flow.py
+```
+
+**Tasks principales**
+
+- find_latest_raw: detecta el parquet RAW más reciente
+
+- download_from_minio: descarga el archivo para procesamiento local
+
+- transform_parquet: aplica enriquecimiento y feature engineering
+
+- save_silver: guarda el dataset transformado
+
+- upload_to_minio: sube el resultado a MinIO (SILVER)
+
+- register_transformation_event: registra auditoría en PostgreSQL
+
+---
+
+## 📂 Estructura del módulo
+
+```text
+pipeline/
+  transformation/
+    data_transformation_flow.py
+    README.md
+```
+
+---
+
+## 📦 Requisitos previos
+
+**Buckets MinIO**
 
 ```text
 cybersec-ml-raw
 cybersec-ml-silver
 ```
+**Tabla PostgreSQL**
 
-
-## 📌 Tabla PostgreSQL creada:
-
-```sql
+```text
 CREATE TABLE transformation_events (
     id SERIAL PRIMARY KEY,
     timestamp_transformacion TIMESTAMP NOT NULL,
@@ -77,7 +113,28 @@ CREATE TABLE transformation_events (
 );
 ```
 
-## 📌 Variables de entorno requeridas:
+---
+
+
+## 🔗 Integración en el pipeline completo
+
+Este módulo se ejecuta como subflow dentro del pipeline MLOps global definido en:
+
+```text
+pipeline/full_mlops_flow.py
+```
+
+Su correcta ejecución es un prerrequisito para:
+
+- entrenamiento del modelo
+
+- evaluación del rendimiento
+
+- registro de artefactos
+
+---
+
+## 📌 Variables de entorno (ejemplo ilustrativo)
 
 ```text
 export MINIO_ENDPOINT="localhost:9000"
@@ -90,6 +147,11 @@ export PG_USER="postgres"
 export PG_PASSWORD="<YOUR_PASSWORD>"
 export PG_DATABASE="mlops_db"
 ```
+
+> Las siguientes variables de entorno se muestran a modo ilustrativo para ejecución local.
+En entornos Kubernetes, estas variables se inyectan mediante Secrets y ConfigMaps.
+
+---
 
 ## ▶️ Ejecución del pipeline
 
