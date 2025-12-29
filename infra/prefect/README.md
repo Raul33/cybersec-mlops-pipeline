@@ -117,7 +117,7 @@ Esta información permite:
 
 ---
 
-## Ejecución en Kubernetes
+## ⚙️ Ejecución en Kubernetes
 
 El pipeline se ejecuta en Kubernetes mediante un **Job**, que lanza el flow principal:
 
@@ -145,7 +145,7 @@ En el estado actual del proyecto:
 
 ✔️ Prefect orquesta todo el pipeline
 ✔️ Se ejecuta correctamente en Kubernetes
-✔️ No depende de Prefect Cloud
+✔️ No depende de Prefect Cloud (se prioriza ejecución on-premise y control total del entorno)
 ✔️ No utiliza scheduling automático
 
 No se incluyen todavía:
@@ -193,7 +193,11 @@ Estas mejoras pueden añadirse sin modificar la lógica existente del pipeline.
 
 ---
 
-## 🚀 Instalación con Helm
+## 🚀 Instalación de Prefect (contexto de infraestructura)
+
+> Esta sección describe cómo se despliega Prefect en el clúster Kubernetes.
+> No forma parte de la lógica del pipeline ni es necesaria para entender su funcionamiento.
+
 
 ```yaml
 helm repo add prefect https://prefecthq.github.io/prefect-helm

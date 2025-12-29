@@ -1,12 +1,31 @@
-# 📦 MinIO - Almacenamiento de objetos
+# MinIO — Almacenamiento de objetos (Data Lake)
 
-MinIO actúa como almacenamiento de objetos compatible con S3, utilizado por MLflow, Airflow y otras herramientas MLOps.
+## 📌 Rol de MinIO en el sistema
+
+**MinIO** actúa como el sistema de **almacenamiento persistente central** del proyecto `cybersec-mlops-pipeline`.
+
+Su función es proporcionar un **data lake compatible con S3**, desplegado on-premise sobre Kubernetes, que permita:
+
+- almacenar datasets y artefactos ML
+- desacoplar completamente el pipeline del filesystem local
+- garantizar reproducibilidad y trazabilidad
+- simular arquitecturas reales de MLOps en entornos corporativos
+
+MinIO se utiliza como **fuente única de persistencia**, tanto para datos como para modelos y resultados.
 
 ---
 
-## 🚀 Despliegue en Kubernetes (Helm)
+## 🚀 Despliegue de MinIO en Kubernetes
 
-Este despliegue se realiza con recursos mínimos para laboratorios con recursos limitados (ej: entornos caseros o pruebas).
+MinIO se despliega en el clúster Kubernetes mediante **Helm**, utilizando un fichero `values-minio.yaml` personalizado.
+
+Este enfoque permite:
+
+- configuración declarativa
+- despliegue reproducible
+- fácil adaptación a otros entornos
+
+El despliegue se realiza dentro del namespace `mlops`.
 
 ### 📁 Archivo de configuración
 
@@ -57,3 +76,76 @@ export MC_HOST_mlops-minio-local=http://user:password@localhost:9001
 ```yaml
 mc ls mlops-minio-local
 ```
+
+### 🔍 Validación y acceso
+
+Durante el desarrollo y validación del sistema se comprobó:
+
+- correcta creación de buckets
+- subida de objetos desde el pipeline
+- versionado por timestamp
+- lectura correcta desde distintos flows
+
+El acceso a la consola web de MinIO se realiza mediante port-forward:
+
+```bash
+kubectl port-forward -n mlops svc/minio 9001:9001
+```
+
+📌 El puerto 9000 se utiliza exclusivamente para la API S3.
+
+---
+
+## 🧱 Capas de almacenamiento (buckets)
+
+El proyecto implementa una separación clara de responsabilidades mediante distintos buckets:
+
+```text
+cybersec-ml-raw       → datos ingeridos sin procesar
+cybersec-ml-silver    → datos transformados y enriquecidos
+cybersec-ml-models    → modelos entrenados
+cybersec-ml-eval      → resultados de evaluación
+```
+Cada bucket representa una **fase del ciclo de vida del dato o del modelo**, facilitando:
+
+- auditoría
+
+- versionado
+
+- rollback
+
+- reutilización de artefactos
+
+---
+
+## 🔁 Integración con el pipeline MLOps
+
+MinIO se integra con el pipeline MLOps en todas sus fases:
+
+- Ingesta → escritura en `cybersec-ml-raw`
+- Transformación → lectura RAW / escritura SILVER
+- Entrenamiento → lectura SILVER / escritura MODELS
+- Evaluación → lectura MODELS / escritura EVAL
+
+Todos los flows de Prefect utilizan MinIO como backend de persistencia, accediendo mediante la API S3 y variables de entorno.
+
+📌 Ningún artefacto crítico se almacena de forma persistente en el contenedor.
+
+---
+
+## ⚠️ Alcance actual
+
+En el estado actual del proyecto, MinIO se utiliza como:
+
+✔️ data lake on-premise  
+✔️ almacenamiento de datasets y modelos  
+✔️ backend S3 para pipelines batch  
+
+No se incluyen todavía:
+
+- versionado avanzado de objetos
+- políticas de retención
+- cifrado en reposo
+- integración con MLflow
+
+Estas mejoras se consideran **trabajo futuro**.
