@@ -1,6 +1,38 @@
-# 🐘 PostgreSQL - Base de datos para servicios MLOps
+# 🐘 PostgreSQL — Base de datos de auditoría y trazabilidad MLOps
 
-PostgreSQL se utiliza como backend para herramientas como **MLflow** o **Airflow**, permitiendo guardar metadatos, ejecuciones, experimentos o DAGs. En este caso, se ha desplegado como base de datos común para los servicios que la necesiten.
+PostgreSQL se utiliza en el proyecto `cybersec-mlops-pipeline` como **base de datos central de auditoría y metadatos operacionales** del pipeline MLOps.
+
+Su función principal es **registrar, persistir y consultar información estructurada** sobre cada ejecución del pipeline, incluyendo:
+
+- ingestas de datos
+- transformaciones aplicadas
+- entrenamientos de modelos
+- evaluaciones realizadas
+
+PostgreSQL actúa como **fuente de verdad histórica** del sistema, complementando a Prefect (observabilidad) y MinIO (persistencia de artefactos).
+
+
+---
+
+## 🎯 Rol de PostgreSQL en el pipeline MLOps
+
+PostgreSQL se utiliza como **capa de auditoría transversal** a todo el pipeline MLOps.
+
+A diferencia de MinIO (almacenamiento de artefactos) y Prefect (orquestación), PostgreSQL permite:
+
+- registrar eventos estructurados por ejecución
+- consultar histórico de ejecuciones
+- auditar qué datos y modelos se usaron
+- responder a preguntas operativas y académicas
+
+Ejemplos de preguntas que PostgreSQL permite responder:
+
+- ¿Cuándo se ejecutó por última vez el pipeline?
+- ¿Qué dataset se utilizó para entrenar un modelo concreto?
+- ¿Cuántos registros procesó cada fase?
+- ¿Qué ejecuciones fallaron o tuvieron resultados anómalos?
+
+📌 Esta base de datos **no se utiliza para datos de negocio**, sino exclusivamente para **metadatos MLOps**.
 
 ---
 
@@ -31,7 +63,7 @@ Puerto: 5432
 
 Usuario: postgres
 
-Contraseña: mlops_pass
+Contraseña: ****
 
 Base de datos: mlops_db
 
@@ -39,8 +71,66 @@ Base de datos: mlops_db
 
 ```yaml
 kubectl run -it --rm psql-client --image=bitnami/postgresql --namespace mlops \
-  --env="PGPASSWORD=mlops_pass" --command -- psql -h mlops-postgresql -U postgres -d mlops_db
+  --env="PGPASSWORD=****" --command -- psql -h mlops-postgresql -U postgres -d mlops_db
 
 ```
+
+---
+
+## 🗄️ Esquema de auditoría utilizado
+
+El pipeline MLOps utiliza varias tablas para registrar eventos operacionales. Cada fase del pipeline inserta un registro por ejecución.
+
+### 📥 Tabla `ingestion_events`
+
+Registra cada ingesta de datos en la capa RAW.
+
+Campos principales:
+- timestamp_ingesta
+- nombre_archivo
+- ruta_minio
+- num_registros
+- estado
+
+---
+
+### 🔄 Tabla `transformation_events`
+
+Registra cada transformación RAW → SILVER.
+
+Campos principales:
+- timestamp_transformacion
+- nombre_archivo
+- ruta_minio
+- num_registros
+- estado
+
+---
+
+### 🧠 Tabla `training_events`
+
+Registra cada entrenamiento de modelo.
+
+Campos principales:
+- timestamp_entrenamiento
+- ruta_modelo
+- num_registros
+- parametros
+- estado
+
+---
+
+### 📊 Tabla `evaluation_events`
+
+Registra cada evaluación del modelo entrenado.
+
+Campos principales:
+- timestamp_eval
+- modelo_nombre
+- nombre_dataset
+- ruta_resultados
+- metrics
+- estado
+
 
 

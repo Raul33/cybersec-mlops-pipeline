@@ -34,7 +34,7 @@ Ruta: `infra/minio/values-minio.yaml`
 ### 💻 Comando de instalación
 
 ```yaml
-helm install mlops-minio minio/minio \
+helm upgrade --install mlops-minio minio/minio \
   --namespace mlops \
   -f infra/minio/values-minio.yaml \
   --set accessKey=minioaccess \
@@ -58,6 +58,8 @@ Asignar un nombre, por ejemplo: mlflow-artifacts
 Configuración por defecto
 
 Este bucket lo usaremos para MLflow y otros servicios que requieran almacenamiento S3.
+
+> NOTA: 📌 Este bucket se prepara como base para una futura integración con MLflow.
 
 ### 🧰 Configurar el cliente mc (opcional)
 
