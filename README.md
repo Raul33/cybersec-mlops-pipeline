@@ -91,68 +91,6 @@ Esta capa de auditoría es fundamental en entornos de **ciberseguridad**, donde 
 
 ---
 
-## 🧩 Arquitectura MLOps del sistema
-
-Este proyecto implementa una **arquitectura MLOps end-to-end** para la detección de anomalías en eventos de red, diseñada bajo principios de:
-
-- reproducibilidad
-- desacoplamiento
-- trazabilidad
-- ejecución en Kubernetes
-
-El sistema cubre **todo el ciclo de vida del modelo**, desde la ingesta de datos hasta la evaluación final, sin dependencias del entorno local.
-
----
-
-### 🏗 Componentes principales
-
-El sistema se compone de los siguientes bloques:
-
-- **Notebooks**  
-  Justificación teórica y experimental del enfoque (no productivos).
-
-- **Pipeline MLOps (Prefect)**  
-  Orquesta todo el flujo batch:
-  - ingesta
-  - transformación
-  - entrenamiento
-  - evaluación
-
-- **MinIO**  
-  Actúa como *data lake* y *model registry*:
-  - RAW → datos sin procesar
-  - SILVER → datos transformados
-  - MODELS → artefactos entrenados
-  - EVAL → resultados de evaluación
-
-- **PostgreSQL**  
-  Almacena metadatos operacionales:
-  - ejecuciones
-  - datasets usados
-  - parámetros de entrenamiento
-  - métricas obtenidas
-
-- **Kubernetes (RKE2)**  
-  Ejecuta el pipeline como Jobs desacoplados, permitiendo escalado y aislamiento.
-
-- **Aplicación Streamlit**  
-  Permite visualizar anomalías detectadas y evaluar el comportamiento del modelo.
-
----
-
-### 🔄 Flujo de alto nivel
-
-1. Se generan o ingieren eventos de red
-2. Los datos se validan y almacenan en la capa RAW (MinIO)
-3. Se transforman y enriquecen (SILVER)
-4. Se entrena un modelo Isolation Forest
-5. El modelo se evalúa sobre datos recientes
-6. Todos los pasos quedan auditados
-
-Este diseño refleja un **pipeline MLOps realista**, alineado con prácticas profesionales en entornos de ciberseguridad.
-
----
-
 
 ## 📓 Notebooks
 
@@ -178,128 +116,30 @@ Contiene:
 
 ## 📁 Estructura del Proyecto
 
-> ⚠️ **Nota sobre la estructura**
->
-> Este repositorio incluye tanto:
->
-> - código exploratorio y scripts iniciales (fase de experimentación)
-> - como una implementación completa de un pipeline MLOps productivo sobre Kubernetes
->
-> Ambas partes se conservan deliberadamente:
-> - los **scripts y notebooks** justifican decisiones técnicas
-> - el **pipeline Prefect + MinIO + PostgreSQL** representa la solución final
+El repositorio está organizado para reflejar claramente la separación entre:
 
+- **pipeline MLOps productivo**
+- **infraestructura en Kubernetes**
+- **código exploratorio y de apoyo**
+- **documentación académica**
+
+La estructura principal es:
 
 ```bash
 cybersec-mlops-pipeline/
-├── backend/                  # (Vacío) Backend opcional para FastAPI
-├── data/                     # Datos de entrada y salida
-│   ├── normalized/          # Dataset procesado en Parquet
-│   │   └── zeek.parquet
-│   └── alerts_ml.csv        # Alertas generadas por ML
-├── docs/                     # Documentación interna del proyecto
-│   ├── 01_objetivos.md
-│   ├── 02_metricas.md
-│   ├── 03_estructura.md
-│   ├── 04_scripts.md
-│   └── 05_tests.md
-├── frontend/                 # Interfaz web en Streamlit
-│   └── streamlit_app.py
-├── infra/                    # (Vacío) Infraestructura para K8s, Helm, CI/CD
-├── ml/                       # Lógica de entrenamiento y scoring
-│   ├── anomaly_detector.py
-│   └── features.py
-├── models/                   # Modelos entrenados
-│   └── iforest.joblib
-├── notebooks/                # Notebooks de análisis
-│   └── deteccion_anomalias_explicado.ipynb
-├── rules/                    # Reglas Sigma simuladas
-│   └── sigma_emulator.py
-├── scripts/                  # Scripts ejecutables del pipeline
-│   ├── generate_test_parquet.py
-│   ├── run_iforest.py
-│   ├── run_pipeline.py
-│   ├── score_events.py
-│   └── train_iforest.py
-├── tests/                    # Tests unitarios
-│   └── test_pipeline.py
-├── Dockerfile                # Definición de imagen Docker
-├── requirements.pipeline.txt # Dependencias del pipeline (Prefect + ML + MinIO + PostgreSQL)
-├── requirements.ui.txt       # Dependencias de la UI (Streamlit + lectura MinIO)
-└── README.md                 # Este archivo
-```
-
-```bash
-cybersec-mlops-pipeline/
-├── Dockerfile
-├── Dockerfile.pipeline
-├── docs/
-│   ├── 01_objetivos.md
-│   ├── 02_metricas.md
-│   ├── 03_estructura.md
-│   ├── 04_scripts.md
-│   ├── 05_tests.md
-│   ├── 06_ingestion_minio.md
-│   ├── 07_resultados.md
-│   ├── 08_datos_y_limitaciones.md
-│   └── 09_conclusiones_y_trabajo_futuro.md
-├── frontend/
-│   ├── README.md
-│   └── streamlit_app.py
-├── infra/
-│   ├── k8s/
-│   │   ├── job-full-mlops.md
-│   │   ├── job-full-mlops.yaml
-│   │   ├── streamlit-deployment.md
-│   │   └── streamlit-deployment.yaml
-│   ├── minio/
-│   │   ├── README.md
-│   │   └── values-minio.yaml
-│   ├── mlflow/
-│   │   ├── README.md
-│   │   └── values-mlflow.yaml
-│   ├── postgresql/
-│   │   ├── README.md
-│   │   └── values-postgresql.yaml
-│   └── prefect/
-│       └── README.md
-├── ml/
-│   ├── anomaly_detector.py
-│   └── features.py
-├── notebooks/
-│   └── deteccion_anomalias_explicado.ipynb
-├── pipeline/
-│   ├── config/
-│   │   └── features.py
-│   ├── evaluation/
-│   │   ├── model_evaluation_flow.py
-│   │   └── README.md
-│   ├── full_mlops_flow.py
-│   ├── ingestion/
-│   │   ├── data_ingestion_flow.py
-│   │   ├── __init__.py
-│   │   └── README.md
-│   ├── README.md
-│   ├── training/
-│   │   ├── model_training_flow.py
-│   │   └── README.md
-│   └── transformation/
-│       ├── data_transformation_flow.py
-│       └── README.md
+├── pipeline/        # Pipeline MLOps productivo (Prefect)
+├── infra/           # Kubernetes + Helm (MinIO, PostgreSQL, MLflow, Prefect)
+├── frontend/        # Aplicación SOC Copilot (Streamlit)
+├── docs/            # Documentación técnica del TFM
+├── notebooks/       # Justificación experimental del modelo
+├── scripts/         # Código exploratorio y legacy
+├── ml/              # Lógica ML base
+├── rules/           # Simulación de reglas Sigma
+├── tests/           # Tests básicos
 ├── README.md
 ├── repo_tree.txt
 ├── requirements.pipeline.txt
 ├── requirements.ui.txt
-├── rules/
-│   └── sigma_emulator.py
-├── scripts/
-│   ├── generate_test_parquet.py
-│   ├── run_iforest.py
-│   ├── run_pipeline.py
-│   ├── score_events.py
-│   └── train_iforest.py
-└── tests/
-    └── test_pipeline.py
 ```
 
 ### 🧪 Código exploratorio y scripts legacy
@@ -316,7 +156,7 @@ Incluyen:
 - `rules/` → simulación de reglas Sigma
 - `tests/` → pruebas unitarias básicas
 
-Este código **no se ejecuta en producción**, pero es clave para entender la evolución del sistema.
+Este código **no forma parte del pipeline productivo**, pero es clave para entender la evolución del sistema.
 
 ### 🔁 Pipeline MLOps productivo (Kubernetes)
 
@@ -442,8 +282,8 @@ La aplicación Streamlit se utiliza únicamente como **capa de visualización**,
 ### 🐿️ Lanzar la app con Docker
 
 ```bash
-docker build -t soc-copilot-app .
-docker run -p 8501:8501 -v $(pwd)/data:/app/data soc-copilot-app
+docker build -t soc-copilot-ui .
+docker run -p 8501:8501 -v $(pwd)/data:/app/data soc-copilot-ui
 ```
 
 Accede a la app desde:
