@@ -224,8 +224,82 @@ cybersec-mlops-pipeline/
 ├── tests/                    # Tests unitarios
 │   └── test_pipeline.py
 ├── Dockerfile                # Definición de imagen Docker
-├── requirements.txt          # Dependencias del proyecto
+├── requirements.pipeline.txt # Dependencias del pipeline (Prefect + ML + MinIO + PostgreSQL)
+├── requirements.ui.txt       # Dependencias de la UI (Streamlit + lectura MinIO)
 └── README.md                 # Este archivo
+```
+
+```bash
+cybersec-mlops-pipeline/
+├── Dockerfile
+├── Dockerfile.pipeline
+├── docs/
+│   ├── 01_objetivos.md
+│   ├── 02_metricas.md
+│   ├── 03_estructura.md
+│   ├── 04_scripts.md
+│   ├── 05_tests.md
+│   ├── 06_ingestion_minio.md
+│   ├── 07_resultados.md
+│   ├── 08_datos_y_limitaciones.md
+│   └── 09_conclusiones_y_trabajo_futuro.md
+├── frontend/
+│   ├── README.md
+│   └── streamlit_app.py
+├── infra/
+│   ├── k8s/
+│   │   ├── job-full-mlops.md
+│   │   ├── job-full-mlops.yaml
+│   │   ├── streamlit-deployment.md
+│   │   └── streamlit-deployment.yaml
+│   ├── minio/
+│   │   ├── README.md
+│   │   └── values-minio.yaml
+│   ├── mlflow/
+│   │   ├── README.md
+│   │   └── values-mlflow.yaml
+│   ├── postgresql/
+│   │   ├── README.md
+│   │   └── values-postgresql.yaml
+│   └── prefect/
+│       └── README.md
+├── ml/
+│   ├── anomaly_detector.py
+│   └── features.py
+├── notebooks/
+│   └── deteccion_anomalias_explicado.ipynb
+├── pipeline/
+│   ├── config/
+│   │   └── features.py
+│   ├── evaluation/
+│   │   ├── model_evaluation_flow.py
+│   │   └── README.md
+│   ├── full_mlops_flow.py
+│   ├── ingestion/
+│   │   ├── data_ingestion_flow.py
+│   │   ├── __init__.py
+│   │   └── README.md
+│   ├── README.md
+│   ├── training/
+│   │   ├── model_training_flow.py
+│   │   └── README.md
+│   └── transformation/
+│       ├── data_transformation_flow.py
+│       └── README.md
+├── README.md
+├── repo_tree.txt
+├── requirements.pipeline.txt
+├── requirements.ui.txt
+├── rules/
+│   └── sigma_emulator.py
+├── scripts/
+│   ├── generate_test_parquet.py
+│   ├── run_iforest.py
+│   ├── run_pipeline.py
+│   ├── score_events.py
+│   └── train_iforest.py
+└── tests/
+    └── test_pipeline.py
 ```
 
 ### 🧪 Código exploratorio y scripts legacy

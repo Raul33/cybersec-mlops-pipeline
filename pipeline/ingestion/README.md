@@ -7,7 +7,7 @@ Este módulo implementa el flujo de ingesta de datos sintéticos para el proyect
 ## 🧱 Estado actual del módulo
 
 ✓ Entorno virtual Python 3.11 creado
-✓ Dependencias reproducibles en `requirements.txt`
+✓ Dependencias reproducibles en `requirements.pipeline.txt`
 ✓ Prefect funcionando correctamente
 ✓ Flow base ejecutable en local
 ✓ Trazabilidad desde logs Prefect

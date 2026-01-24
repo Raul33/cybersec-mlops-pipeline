@@ -1,12 +1,6 @@
 .
-├── app
-│   └── models
-├── backend
 ├── Dockerfile
 ├── Dockerfile.pipeline
-├── Dockerfile.streamlit
-├── Dockerfile.streamlit.final
-├── Dockerfile.streamlit.slim
 ├── .dockerignore
 ├── docs
 │   ├── 01_objetivos.md
@@ -14,13 +8,19 @@
 │   ├── 03_estructura.md
 │   ├── 04_scripts.md
 │   ├── 05_tests.md
-│   └── 06_ingestion_minio.md
+│   ├── 06_ingestion_minio.md
+│   ├── 07_resultados.md
+│   ├── 08_datos_y_limitaciones.md
+│   └── 09_conclusiones_y_trabajo_futuro.md
 ├── frontend
+│   ├── README.md
 │   └── streamlit_app.py
 ├── .gitignore
 ├── infra
 │   ├── k8s
+│   │   ├── job-full-mlops.md
 │   │   ├── job-full-mlops.yaml
+│   │   ├── streamlit-deployment.md
 │   │   └── streamlit-deployment.yaml
 │   ├── minio
 │   │   ├── README.md
@@ -36,20 +36,20 @@
 ├── ml
 │   ├── anomaly_detector.py
 │   └── features.py
-├── models
-│   └── iforest.joblib
 ├── notebooks
 │   └── deteccion_anomalias_explicado.ipynb
 ├── pipeline
 │   ├── config
 │   │   └── features.py
 │   ├── evaluation
-│   │   └── model_evaluation_flow.py
+│   │   ├── model_evaluation_flow.py
+│   │   └── README.md
 │   ├── full_mlops_flow.py
 │   ├── ingestion
 │   │   ├── data_ingestion_flow.py
 │   │   ├── __init__.py
 │   │   └── README.md
+│   ├── README.md
 │   ├── training
 │   │   ├── model_training_flow.py
 │   │   └── README.md
@@ -59,7 +59,6 @@
 ├── README.md
 ├── repo_tree.txt
 ├── requirements.pipeline.txt
-├── requirements.txt
 ├── requirements.ui.txt
 ├── rules
 │   └── sigma_emulator.py
@@ -72,4 +71,4 @@
 └── tests
     └── test_pipeline.py
 
-24 directories, 49 files
+20 directories, 52 files
