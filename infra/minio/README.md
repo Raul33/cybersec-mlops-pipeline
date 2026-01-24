@@ -91,7 +91,7 @@ Durante el desarrollo y validación del sistema se comprobó:
 El acceso a la consola web de MinIO se realiza mediante port-forward:
 
 ```bash
-kubectl port-forward -n mlops svc/minio 9001:9001
+kubectl port-forward -n mlops svc/mlops-minio-console 9001:9001
 ```
 
 📌 El puerto 9000 se utiliza exclusivamente para la API S3.

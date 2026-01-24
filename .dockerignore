@@ -4,4 +4,5 @@
 !requirements-streamlit.txt
 !requirements.ui.txt
 !requirements.pipeline.txt
+!requirements.txt
 Dockerfile.streamlit

@@ -412,3 +412,5 @@ El alcance del proyecto se ha delimitado conscientemente para priorizar:
 - [ ] Validación temporal del modelo (data drift / concept drift)
 
 ---
+
+> Este repositorio refleja tanto la evolución del proyecto como su arquitectura final, diferenciando claramente entre fases exploratorias y componentes productivos.

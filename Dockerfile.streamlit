@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Solo las deps de la UI
-COPY requirements-streamlit.txt .
-RUN pip install -r requirements-streamlit.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Solo copiamos el frontend (y no todo el repo para no engordar capas)
 COPY frontend/ ./frontend/
